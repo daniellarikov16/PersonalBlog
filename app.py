@@ -1,5 +1,6 @@
 from flask import *
 from flask_login import *
+import os
 
 app = Flask (__name__)
 app.secret_key = 'dany_buster16'
@@ -13,6 +14,23 @@ class User(UserMixin):
         self.id = id
 
 users = {'user' : {'password':'123456789'}}
+def load_data(folder_path):
+    all_data = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.json'):
+            file_path = os.path.join(folder_path, filename)
+            with open (file_path, 'r', encoding='utf-8') as f:
+                try:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        all_data.extend(data)
+                    else:
+                        all_data.append(data)
+                except json.JSONDecodeError:
+                    print(f'JSONDecodeError in file: {filename}')
+    return all_data
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User(user_id)
@@ -30,8 +48,26 @@ def login():
         else:
             flash('Вы ввели неверные данные!', 'error')
     return render_template('login.html')
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('/'))
 @app.route('/admin', methods = ['GET', 'POST'])
+@login_required
 def admin():
-    return render_template('admin.html')
+    data_folder = 'data'
+    all_data = load_data(data_folder)
+    return render_template('admin.html', data = all_data)
+@app.route('/')
+def main_page():
+    data_folder = 'data'
+    all_data = load_data(data_folder)
+    return render_template('index.html', data = all_data)
+@app.route('/add', methods=['GET', 'POST'])
+def create_new():
+    data_folder = 'data'
+    all_data = load_data(data_folder)
+    return render_template('create.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

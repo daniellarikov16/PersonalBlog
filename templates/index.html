@@ -27,7 +27,7 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        .add-button {
+        .login-button {
             display: block;
             width: 100%;
             padding: 10px;
@@ -40,7 +40,7 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        .add-button:hover {
+         .login-button:hover {
             background-color: #0056b3;
         }
         .data-block {
@@ -62,8 +62,8 @@
 <body>
     <div class="container">
         <h1>Информация из базы данных</h1>
-        <form action="/add">
-            <button class="add-button" onclick="location.href='/add'">Add +</button>
+        <form action="/login">
+            <button class="login-button" onclick="location.href='/add'">Log in if you are the creator</button>
         </form>
         {% for item in data %}
            <div class="data-block">
@@ -71,7 +71,6 @@
             <p>{{ item.description }}</p>
            </div>
         {% endfor %}
-
     </div>
 </body>
 </html>
